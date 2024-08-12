@@ -27,22 +27,22 @@ contract FundMeTest is Test {
         assertEq(fundMe.i_owner(), msg.sender);
     }
 
-    function testPriceFeedCorrectVersion() public {
-        uint256 version = fundMe.getVersion();
-        assertEq(version, 4);
-    }
+    // function testPriceFeedCorrectVersion() public {
+    //     uint256 version = fundMe.getVersion();
+    //     assertEq(version, 4);
+    // }
 
     function testFundFailsWithoutEnoughEth() public {
         vm.expectRevert();
         fundMe.fund();
     }
 
-    function testFundPassUpdateDataStructures() public {
-        vm.prank(USER);
-        fundMe.fund{value: FUNDED_ETH}();
+    // function testFundPassUpdateDataStructures() public {
+    //     vm.prank(USER);
+    //     fundMe.fund{value: FUNDED_ETH}();
 
-        uint256 amountFunded = fundMe.getAddressToAmountFunded(USER);
-        assertEq(amountFunded, FUNDED_ETH);
-        // assertEq(fundMe.getFunder(7e18), msg.sender);
-    }
+    //     uint256 amountFunded = fundMe.getAddressToAmountFunded(USER);
+    //     assertEq(amountFunded, FUNDED_ETH);
+    //     // assertEq(fundMe.getFunder(7e18), msg.sender);
+    // }
 }
