@@ -10,13 +10,13 @@ import {DeployFundMe} from "../script/DeployFundMe.s.sol";
 contract FundMeTest is Test {
     FundMe public fundMe;
     address USER = makeAddr("user");
-    uint256 constant FUNDED_ETH = 0.1 ether;
-    uint256 constant STARTING_BALANCE = 10 ether;
+    uint256 constant fundedEth = 7 ether;
+    uint256 constant startingBalance = 10 ether;
 
     function setUp() external {
         DeployFundMe deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run();
-        vm.deal(USER, STARTING_BALANCE);
+        vm.deal(USER, startingBalance);
     }
 
     function testMinimumUsdIsFive() public {
@@ -37,12 +37,28 @@ contract FundMeTest is Test {
         fundMe.fund();
     }
 
-    // function testFundPassUpdateDataStructures() public {
-    //     vm.prank(USER);
-    //     fundMe.fund{value: FUNDED_ETH}();
+    function testFundPassUpdateDataStructures() public {
+        vm.prank(USER);
+        fundMe.fund{value: fundedEth}();
 
-    //     uint256 amountFunded = fundMe.getAddressToAmountFunded(USER);
-    //     assertEq(amountFunded, FUNDED_ETH);
-    //     // assertEq(fundMe.getFunder(7e18), msg.sender);
-    // }
+        uint256 amountFunded = fundMe.getAddressToAmountFunded(USER);
+        assertEq(amountFunded, fundedEth);
+    }
+
+    function testAddsFundedArrayOfFunders() public {
+        vm.prank(USER);
+        fundMe.fund{value: fundedEth}();
+
+        address funder = fundMe.getFunder(0);
+        assertEq(funder, USER);
+    }
+
+    function testOnlyOwnerCanWithraw() public {
+        vm.prank(USER);
+        fundMe.fund{value: fundedEth}();
+
+        vm.expectRevert();
+        vm.prank(USER);
+        fundMe.withdraw();
+    }
 }

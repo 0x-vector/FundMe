@@ -5,6 +5,7 @@ pragma solidity ^0.8.18;
 // Note: The AggregatorV3Interface might be at a different location than what was in the video!
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {PriceConverter} from "./PriceConverter.sol";
+import "forge-std/console.sol";
 
 error fundMe__NotOwner();
 
@@ -25,7 +26,9 @@ contract FundMe {
     }
 
     function fund() public payable {
-        require(msg.value.getConversionRate(s_priceFeed) >= MINIMUM_USD, "You need to spend more ETH!");
+        uint256 conversion = msg.value.getConversionRate(s_priceFeed);
+        console.log("Conversion Value: ", conversion);
+        require(conversion >= MINIMUM_USD, "You need to spend more ETH!");
         // require(PriceConverter.getConversionRate(msg.value) >= MINIMUM_USD, "You need to spend more ETH!");
         s_addressToAmountFunded[msg.sender] += msg.value;
         s_funders.push(msg.sender);
@@ -59,7 +62,7 @@ contract FundMe {
         require(callSuccess, "Call failed");
     }
     // Explainer from: https://solidity-by-example.org/fallback/
-    // Ether is sent to contract
+    // Ether is sent to contract=
     //      is msg.data empty?
     //          /   \
     //         yes  no
